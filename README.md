@@ -28,17 +28,20 @@ without history.
 
 ## What it finds on real patches
 
-Five patches published from this account were audited against full-history
+Eight patches published from this account were audited against full-history
 clones, 730-day window (raw data: `evidence/audit.json`, run log:
 `evidence/audit.md`).
 
 | published repo | upstream | verdict | added-line overlap | audit time |
 |---|---|---|---|---|
-| `linluozi/cachetools-lru-opt-lab` | `tkem/cachetools` | **hit** | 5/5 | 0.051 s |
-| `linluozi/semver-opt-lab` | `python-semver/python-semver` | clear | — | 0.040 s |
-| `linluozi/pyjson5-opt-lab` | `dpranke/pyjson5` | clear | — | 0.038 s |
-| `linluozi/inflect-opt-lab` | `jaraco/inflect` | clear | — | 0.068 s |
+| `linluozi/cachetools-lru-opt-lab` | `tkem/cachetools` | **hit** | 5/5 | 0.050 s |
+| `linluozi/semver-opt-lab` | `python-semver/python-semver` | clear | — | 0.038 s |
+| `linluozi/pyjson5-opt-lab` | `dpranke/pyjson5` | clear | — | 0.040 s |
+| `linluozi/inflect-opt-lab` | `jaraco/inflect` | clear | — | 0.071 s |
 | `linluozi/jsonpatch-apply-opt-lab` | `stefankoegl/python-json-patch` | clear | — | 0.090 s |
+| `linluozi/markdown-opt-lab` | `Python-Markdown/markdown` | clear | — | 0.039 s |
+| `linluozi/jsonschema-opt-lab` | `python-jsonschema/jsonschema` | clear | — | 0.072 s |
+| `linluozi/glom-opt-lab` | `mahmoud/glom` | clear | — | 0.008 s |
 
 The hit exists twice in the upstream clone, on two branches, with the same
 `git patch-id` (`19324221d52295596531a861bdd84300178adc7e`):
@@ -49,7 +52,10 @@ c128aa5e538b  master       Improve LRUCache.__setitem__() performance.
 ```
 
 Because the tool searches `--all` refs, it sees both; a clone of only one
-branch may see only one. This is a 1-in-5 sample, not a population estimate.
+branch may see only one. This is a 1-in-8 sample, not a population estimate. All seven `clear` rows had
+zero candidate commits: none of their added lines was introduced anywhere in
+the 730-day window. That is expected for newly written code, but it remains a
+bounded negative (see Limits).
 
 ## Install
 
@@ -105,17 +111,20 @@ Thresholds are configurable (`--min-ratio`, `--max-signatures`,
   change that was reformatted, landed outside the window, or lives in a file
   path the clone does not have will not be found.
 - `git log -S` is a literal pickaxe: changing whitespace *inside* a line
-  defeats it. The compact comparison only helps after a candidate is found.
+  defeats it, and it only fires when the number of occurrences changes. A pure
+  move or reformat is invisible. One audited patch (`markdown-opt-lab`) has
+  10 of its 41 added lines already at HEAD yet zero history candidates, which
+  is consistent with moved code rather than an introduced body.
 - The tool searches git history only. It does **not** query GitHub issues or
   PRs; that remains a manual step (`gh search issues`). This is deliberate:
   the check is local, network-free and deterministic.
 - Candidate commits are capped per file (default 200) for predictable runtime.
-- Five real patches is a small sample; the hit rate is reported as 1/5, not as
+- Eight real patches is a small sample; the hit rate is reported as 1/8, not as
   a general property of this account's output.
 
 ## 本轮创新
 
-新在把「PR 前置查重」从函数名 / 文件名 / commit message 提升到 **added-line 集合**：5 个真实已发布补丁中，cachetools 补丁与上游 `c128aa5`（同 `patch-id` 的 `598aaed`）有 **5/5 行**重合，而上游是把同一函数体内联到 `__setitem__` 后**删掉** `__touch`——任何按名字或按文件的查重都会漏掉它。与台账里「PR 被关后写教训」不同，本工具在发布前以 exit 1 直接拦下；档位 **B**。
+新在把「PR 前置查重」从函数名 / 文件名 / commit message 提升到 **added-line 集合**：8 个真实已发布补丁中，1 个（cachetools）补丁与上游 `c128aa5`（同 `patch-id` 的 `598aaed`）有 **5/5 行**重合，而上游是把同一函数体内联到 `__setitem__` 后**删掉** `__touch`——任何按名字或按文件的查重都会漏掉它。与台账里「PR 被关后写教训」不同，本工具在发布前以 exit 1 直接拦下；档位 **B**。
 
 ## Reproduce
 
@@ -123,7 +132,7 @@ Thresholds are configurable (`--min-ratio`, `--max-signatures`,
 # 1. install and test
 python3 -m venv .venv && . .venv/bin/activate && pip install -e . pytest && python -m pytest -q
 
-# 2. full-history clones + the five real patches (commands in evidence/commands.txt)
+# 2. full-history clones + the eight real patches (commands in evidence/commands.txt)
 python evidence/reproduce.py --clones /tmp/pc-up --out evidence/audit.json
 
 # 3. shallow control: the same patch against a --depth=1 clone exits 2
@@ -133,7 +142,7 @@ preprcheck audit --patch evidence/patches/cachetools-lru-opt-lab.diff --repo /tm
 
 ## Tests
 
-`python -m pytest -q` -> **15 passed in 0.51 s**. Tests build real temporary git
+`python -m pytest -q` -> **15 passed in 0.50 s**. Tests build real temporary git
 repositories and cover: body moved to another function (hit), same file but no
 line overlap (clear), only trivial lines (inconclusive), commit deletion,
 CRLF/multi-file/new-file diffs, signature dedup, CLI JSON exit codes, and the
@@ -142,8 +151,8 @@ shallow-clone refusal.
 ## Environment
 
 AMD EPYC 7K62 (4 vCPU), 3,723 MiB RAM, CPython 3.12.3, git 2.43.0.
-Audit date 2026-11-19; window start 2024-11-19; five upstream clones
-(880 / 548 / 303 / 1246 / 618 commits, 1.1–1.8 MB `.git` each).
+Audit date 2026-11-19; window start 2024-11-19; eight upstream clones
+(303–3,232 commits each, 1.1–4.8 MB `.git`). Total audit time 0.408 s.
 
 ## License
 

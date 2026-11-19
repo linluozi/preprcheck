@@ -1,13 +1,16 @@
-# Reproduce the audit table (5 full-history clones, ~8 MB total)
+# Reproduce the audit table (8 full-history clones, ~18 MB of .git)
 mkdir -p /tmp/pc-up /tmp/pc-patches
 for spec in tkem/cachetools:cachetools python-semver/python-semver:semver \
             dpranke/pyjson5:pyjson5 jaraco/inflect:inflect \
-            stefankoegl/python-json-patch:jsonpatch; do
+            stefankoegl/python-json-patch:jsonpatch \
+            Python-Markdown/markdown:markdown \
+            python-jsonschema/jsonschema:jsonschema \
+            mahmoud/glom:glom; do
   repo=${spec%%:*}; dir=${spec##*:}
   git clone git@github-linluozi:$repo.git /tmp/pc-up/$dir
 done
-for r in cachetools-lru-opt-lab semver-opt-lab pyjson5-opt-lab \
-         inflect-opt-lab jsonpatch-apply-opt-lab; do
+for r in cachetools-lru-opt-lab semver-opt-lab pyjson5-opt-lab inflect-opt-lab \
+         jsonpatch-apply-opt-lab markdown-opt-lab jsonschema-opt-lab glom-opt-lab; do
   GH_TOKEN=$(gh auth token -u linluozi) gh api \
     repos/linluozi/$r/contents/patch.diff --jq .content | base64 -d \
     > evidence/patches/$r.diff

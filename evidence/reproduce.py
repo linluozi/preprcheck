@@ -27,6 +27,9 @@ TABLE = [
     ("linluozi/pyjson5-opt-lab", "dpranke/pyjson5", "pyjson5", "pyjson5-opt-lab.diff"),
     ("linluozi/inflect-opt-lab", "jaraco/inflect", "inflect", "inflect-opt-lab.diff"),
     ("linluozi/jsonpatch-apply-opt-lab", "stefankoegl/python-json-patch", "jsonpatch", "jsonpatch-apply-opt-lab.diff"),
+    ("linluozi/markdown-opt-lab", "Python-Markdown/markdown", "markdown", "markdown-opt-lab.diff"),
+    ("linluozi/jsonschema-opt-lab", "python-jsonschema/jsonschema", "jsonschema", "jsonschema-opt-lab.diff"),
+    ("linluozi/glom-opt-lab", "mahmoud/glom", "glom", "glom-opt-lab.diff"),
 ]
 
 

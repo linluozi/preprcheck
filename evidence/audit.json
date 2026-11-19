@@ -13,7 +13,7 @@
       "verdict": "hit",
       "confidence": "high",
       "searched_commits": 1,
-      "elapsed_s": 0.051,
+      "elapsed_s": 0.05,
       "files": [
         {
           "path": "src/cachetools/__init__.py",
@@ -54,7 +54,7 @@
       "verdict": "clear",
       "confidence": "low",
       "searched_commits": 0,
-      "elapsed_s": 0.04,
+      "elapsed_s": 0.038,
       "files": [
         {
           "path": "src/semver/version.py",
@@ -87,7 +87,7 @@
       "verdict": "clear",
       "confidence": "low",
       "searched_commits": 0,
-      "elapsed_s": 0.038,
+      "elapsed_s": 0.04,
       "files": [
         {
           "path": "json5/parser.py",
@@ -120,7 +120,7 @@
       "verdict": "clear",
       "confidence": "low",
       "searched_commits": 0,
-      "elapsed_s": 0.068,
+      "elapsed_s": 0.071,
       "files": [
         {
           "path": "inflect/__init__.py",
@@ -176,11 +176,103 @@
         }
       ],
       "window_since": "2024-11-19"
+    },
+    {
+      "repo": "linluozi/markdown-opt-lab",
+      "upstream": "Python-Markdown/markdown",
+      "clone_head": "2c96e36ba4750cf18583d62e2fcecff49e077419",
+      "patch": "markdown-opt-lab.diff",
+      "patch_sha256": "e36dd135a9d6c3641b6f7c16fc3663fe5532fed12136f7a07b9242ee29fab37e",
+      "verdict": "clear",
+      "confidence": "low",
+      "searched_commits": 0,
+      "elapsed_s": 0.039,
+      "files": [
+        {
+          "path": "markdown/extensions/abbr.py",
+          "added_lines": 41,
+          "signatures": [
+            "            prefix = block[pos:m.start()].lstrip('\\n') if consumed else block[:m.start()]",
+            "                tail = block[pos:].lstrip('\\n') if consumed else block",
+            "        matches = list(self.RE.finditer(block))",
+            "            if prefix.rstrip('\\n').strip():",
+            "            rest = block[pos:].lstrip('\\n')",
+            "                segments.append(prefix.rstrip('\\n'))",
+            "        definitions was re-scanned O(n) times: quadratic in n.",
+            "            blocks.insert(len(segments), tail)"
+          ],
+          "candidates": 0,
+          "best": null,
+          "head_present": 10,
+          "head_total": 41,
+          "note": ""
+        }
+      ],
+      "window_since": "2024-11-19"
+    },
+    {
+      "repo": "linluozi/jsonschema-opt-lab",
+      "upstream": "python-jsonschema/jsonschema",
+      "clone_head": "64b62de5df4ec52d7679c770427329e86a22c395",
+      "patch": "jsonschema-opt-lab.diff",
+      "patch_sha256": "96667963e8470e94f9406f2becbf7f2d501ca83abacdd8fd3cf130e7747217b8",
+      "verdict": "clear",
+      "confidence": "low",
+      "searched_commits": 0,
+      "elapsed_s": 0.072,
+      "files": [
+        {
+          "path": "jsonschema/validators.py",
+          "added_lines": 25,
+          "signatures": [
+            "        _descend_cache = field(init=False, repr=False, default=None)",
+            "            self._descend_cache: dict[int, object] | None = {}",
+            "                        evolved = self.evolve(schema=schema, _resolver=resolver)",
+            "                            entry = self.evolve(schema=schema, _resolver=resolver)",
+            "                            isinstance(k, str) and k.startswith(\"$\") for k in schema",
+            "        # schema object identity. Built lazily in descend().",
+            "        # Cache of validators evolved into plain (no-$) subschemas, keyed by",
+            "                    # rebuilding a fresh Validator (and sub-resource resolver)"
+          ],
+          "candidates": 0,
+          "best": null,
+          "head_present": 4,
+          "head_total": 25,
+          "note": ""
+        }
+      ],
+      "window_since": "2024-11-19"
+    },
+    {
+      "repo": "linluozi/glom-opt-lab",
+      "upstream": "mahmoud/glom",
+      "clone_head": "fd70d3051a6a1bcb5152ec2d8e2cdc8e852f95e6",
+      "patch": "glom-opt-lab.diff",
+      "patch_sha256": "2d06afb5fef0e5d1de11d0d3e223a843fa86df923e758ffad78735db5220fabe",
+      "verdict": "clear",
+      "confidence": "low",
+      "searched_commits": 0,
+      "elapsed_s": 0.008,
+      "files": [
+        {
+          "path": "glom/core.py",
+          "added_lines": 2,
+          "signatures": [
+            "    if type(arg) is str:  # fast path: literal strings evaluate to themselves"
+          ],
+          "candidates": 0,
+          "best": null,
+          "head_present": 0,
+          "head_total": 2,
+          "note": ""
+        }
+      ],
+      "window_since": "2024-11-19"
     }
   ],
   "summary": {
-    "audited": 5,
+    "audited": 8,
     "hits": 1,
-    "clear": 4
+    "clear": 7
   }
 }
