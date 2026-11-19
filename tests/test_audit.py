@@ -173,3 +173,27 @@ def test_cli_text_report_renders_window(repo, tmp_path):
     assert "HIT (high confidence)" in proc.stdout
     assert "window: since" in proc.stdout
     assert "added-line overlap: 5/5 (100.0%)" in proc.stdout
+
+
+TWO_LINE_PATCH = """--- a/lib.py
++++ b/lib.py
+@@ -1,2 +1,4 @@
+ def existing(x):
+     return x + 1
++    if type(x) is str:
++        return x
+"""
+
+
+def test_two_line_patch_with_one_signature_can_still_hit(repo):
+    repo.commit("lib.py", INITIAL, "initial")
+    base = repo.head("lib.py")
+    changed = base.replace(
+        "    def touch(self, key):",
+        "    if type(x) is str:\n        return x\n\n    def touch(self, key):",
+    )
+    sha = repo.commit("lib.py", changed, "add string fast path")
+    result = audit(str(repo.path), TWO_LINE_PATCH)
+    assert result.verdict == "hit"
+    assert result.files[0].best.sha == sha
+    assert result.files[0].best.matched == 2

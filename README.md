@@ -56,7 +56,7 @@ branch may see only one. This is a 1-in-5 sample, not a population estimate.
 ```bash
 python3 -m venv .venv && . .venv/bin/activate
 pip install -e .
-python -m pytest -q          # 14 passed
+python -m pytest -q          # 15 passed
 ```
 
 No third-party runtime dependency; Python >= 3.9 and a `git` binary are enough.
@@ -133,7 +133,7 @@ preprcheck audit --patch evidence/patches/cachetools-lru-opt-lab.diff --repo /tm
 
 ## Tests
 
-`python -m pytest -q` -> **14 passed in 0.47 s**. Tests build real temporary git
+`python -m pytest -q` -> **15 passed in 0.51 s**. Tests build real temporary git
 repositories and cover: body moved to another function (hit), same file but no
 line overlap (clear), only trivial lines (inconclusive), commit deletion,
 CRLF/multi-file/new-file diffs, signature dedup, CLI JSON exit codes, and the

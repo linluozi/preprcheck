@@ -144,9 +144,10 @@ def _audit_file(
     best: BestMatch | None = None
     searched = 0
     for sha, matched_sigs in ordered:
-        if len(matched_sigs) < 2 and total > 1:
-            # A single shared line is weak evidence; keep looking for a commit
-            # that shares several added lines.
+        if len(matched_sigs) < min(2, len(sigs)) and total > 1:
+            # With several signatures, one shared line is weak evidence.  When
+            # the patch has only one distinctive line there is nothing else to
+            # wait for, so the overlap ratio decides.
             continue
         added_map = commit_added_lines(repo, sha)
         searched += 1

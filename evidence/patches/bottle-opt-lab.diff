@@ -1,0 +1,56 @@
+diff --git a/bottle.py b/bottle.py
+index 2a4b1ac..ac7c590 100755
+--- a/bottle.py
++++ b/bottle.py
+@@ -284,6 +284,7 @@ class Router:
+         self.static = {}  # Search structure for static routes
+         self.dyna_routes = {}
+         self.dyna_regexes = {}  # Search structure for dynamic routes
++        self._dirty = set()  # Methods whose compiled routes are stale
+         #: If true, static routes are no longer checked first.
+         self.strict_order = strict
+         self.filters = {
+@@ -400,7 +401,9 @@ class Router:
+             self.dyna_routes.setdefault(method, []).append(whole_rule)
+             self._groups[flatpat, method] = len(self.dyna_routes[method]) - 1
+ 
+-        self._compile(method)
++        # Compilation is deferred to the first match: recompiling every
++        # dynamic route on each add() is quadratic in the number of routes.
++        self._dirty.add(method)
+ 
+     def _compile(self, method):
+         all_rules = self.dyna_routes[method]
+@@ -413,6 +416,12 @@ class Router:
+             combined = re.compile(combined).match
+             rules = [(target, getargs) for (_, _, target, getargs) in some]
+             comborules.append((combined, rules))
++        self._dirty.discard(method)
++
++    def _get_regexes(self, method):
++        if method in self._dirty:
++            self._compile(method)
++        return self.dyna_regexes.get(method)
+ 
+     def build(self, _name, *anons, **query):
+         """ Build an URL by filling the wildcards in a rule. """
+@@ -438,7 +447,7 @@ class Router:
+             if (paths := self.static.get(method)) and (hit := paths.get(path)):
+                 target, getargs = hit
+                 return target, getargs(path) if getargs else {}
+-            elif (dyna_rules := self.dyna_regexes.get(method)):
++            elif (dyna_rules := self._get_regexes(method)):
+                 for combined, rules in dyna_rules:
+                     if match := combined(path):
+                         target, getargs = rules[match.lastindex - 1]
+@@ -450,8 +459,8 @@ class Router:
+         for method in set(self.static) - nocheck:
+             if path in self.static[method]:
+                 allowed.add(method)
+-        for method in set(self.dyna_regexes) - allowed - nocheck:
+-            for combined, rules in self.dyna_regexes[method]:
++        for method in set(self.dyna_routes) - allowed - nocheck:
++            for combined, rules in self._get_regexes(method) or ():
+                 match = combined(path)
+                 if match:
+                     allowed.add(method)
