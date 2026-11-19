@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "preprcheck"
+version = "0.1.0"
+description = "Check whether a patch body already exists in an upstream git history before opening a PR"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [{ name = "linluozi" }]
+keywords = ["git", "patch", "upstream", "duplicate", "pull-request"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.scripts]
+preprcheck = "preprcheck.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/linluozi/preprcheck"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,186 @@
+{
+  "schema": "preprcheck/evidence/v1",
+  "tool_version": "0.1.0",
+  "window_days": 730,
+  "python": "3.12.3",
+  "rows": [
+    {
+      "repo": "linluozi/cachetools-lru-opt-lab",
+      "upstream": "tkem/cachetools",
+      "clone_head": "c5de5137153b301933922e47bc70b598970e0627",
+      "patch": "cachetools-lru-opt-lab.diff",
+      "patch_sha256": "98e6a3a0af6d02ef92da6ab48cb9bf1e73a7fe579155afa9f312bec176b4099d",
+      "verdict": "hit",
+      "confidence": "high",
+      "searched_commits": 1,
+      "elapsed_s": 0.051,
+      "files": [
+        {
+          "path": "src/cachetools/__init__.py",
+          "added_lines": 5,
+          "signatures": [
+            "            order.move_to_end(key)",
+            "            order[key] = None",
+            "        order = self.__order",
+            "        if key in order:"
+          ],
+          "candidates": 2,
+          "best": {
+            "sha": "598aaede07ea69d06ddd4cb73872c6700d031d24",
+            "date": "2026-11-15T20:21:47+01:00",
+            "subject": "Improve LRUCache.__setitem__() performance.",
+            "matched": 5,
+            "total": 5,
+            "ratio": 1.0,
+            "matched_lines": [
+              "        order = self.__order",
+              "        if key in order:",
+              "            order.move_to_end(key)"
+            ]
+          },
+          "head_present": 5,
+          "head_total": 5,
+          "note": ""
+        }
+      ],
+      "window_since": "2024-11-19"
+    },
+    {
+      "repo": "linluozi/semver-opt-lab",
+      "upstream": "python-semver/python-semver",
+      "clone_head": "a4b7d337b1eb699ad4bad532a4b3fc68f8ec2408",
+      "patch": "semver-opt-lab.diff",
+      "patch_sha256": "5f734338de65b1f99bf130acbba70a032ab5a70fde0be661781becc1b064127f",
+      "verdict": "clear",
+      "confidence": "low",
+      "searched_commits": 0,
+      "elapsed_s": 0.04,
+      "files": [
+        {
+          "path": "src/semver/version.py",
+          "added_lines": 17,
+          "signatures": [
+            "            x = _cmp(self.to_tuple()[:3], other.to_tuple()[:3])",
+            "        if type(self) is Version and type(other) is Version:",
+            "            rc1, rc2 = self._prerelease, other._prerelease",
+            "            rc1, rc2 = self.prerelease, other.prerelease",
+            "            if self._major != other._major:",
+            "            if self._minor != other._minor:",
+            "            if self._patch != other._patch:",
+            "        # those properties, so they keep the original accessor-based path."
+          ],
+          "candidates": 0,
+          "best": null,
+          "head_present": 4,
+          "head_total": 17,
+          "note": ""
+        }
+      ],
+      "window_since": "2024-11-19"
+    },
+    {
+      "repo": "linluozi/pyjson5-opt-lab",
+      "upstream": "dpranke/pyjson5",
+      "clone_head": "9fa01dc3022187f2b1cf453c09d9877cc3b6c632",
+      "patch": "pyjson5-opt-lab.diff",
+      "patch_sha256": "c461571fb77100be56d0f5fc0d25d74ad69fc7831baf4d26595447f338bfe0b7",
+      "verdict": "clear",
+      "confidence": "low",
+      "searched_commits": 0,
+      "elapsed_s": 0.038,
+      "files": [
+        {
+          "path": "json5/parser.py",
+          "added_lines": 15,
+          "signatures": [
+            "        if start >= self.end or self.msg[start] != quote:",
+            "        end = rx.match(self.msg, p).end()",
+            "        if end < self.end and self.msg[end] == quote:",
+            "            self._succeed(self.msg[p:end], end + 1)",
+            "_DQ_STRING_RE = re.compile(r'[^\"\\\\\\r\\n]*')",
+            "_SQ_STRING_RE = re.compile(r\"[^'\\\\\\r\\n]*\")",
+            "        if self._fast_string(\"'\", _SQ_STRING_RE):",
+            "        if self._fast_string('\"', _DQ_STRING_RE):"
+          ],
+          "candidates": 0,
+          "best": null,
+          "head_present": 1,
+          "head_total": 15,
+          "note": ""
+        }
+      ],
+      "window_since": "2024-11-19"
+    },
+    {
+      "repo": "linluozi/inflect-opt-lab",
+      "upstream": "jaraco/inflect",
+      "clone_head": "2084a52769175d8159474779f7cfa71f08f2f911",
+      "patch": "inflect-opt-lab.diff",
+      "patch_sha256": "e1a8ff859583db10e4ec52083430017011dcd68a5b5384690cd1e943f5ba1b9c",
+      "verdict": "clear",
+      "confidence": "low",
+      "searched_commits": 0,
+      "elapsed_s": 0.068,
+      "files": [
+        {
+          "path": "inflect/__init__.py",
+          "added_lines": 16,
+          "signatures": [
+            "        if not isinstance(word, Word) or not isinstance(wordlist, Sequence):",
+            "        helper three times.  The accepted domain is unchanged (``word`` must",
+            "            if _item is not None and not isinstance(_item, Word):",
+            "        Argument validation is inlined: the previous ``@typechecked`` wrapper",
+            "        be a ``str``, ``wordlist`` a sequence of ``str`` or ``None``), but the",
+            "        ``Annotated`` resolution) on every call, and ``plural`` calls this",
+            "        re-ran typeguard's generic machinery (including ``Sequence`` /",
+            "        \"\"\"Return the custom replacement for ``word``, if one matches."
+          ],
+          "candidates": 0,
+          "best": null,
+          "head_present": 2,
+          "head_total": 16,
+          "note": ""
+        }
+      ],
+      "window_since": "2024-11-19"
+    },
+    {
+      "repo": "linluozi/jsonpatch-apply-opt-lab",
+      "upstream": "stefankoegl/python-json-patch",
+      "clone_head": "cc1229ae0892bdad91b2b81403ebbf2529eec6db",
+      "patch": "jsonpatch-apply-opt-lab.diff",
+      "patch_sha256": "241647f0d69b501c0a7ffd14463d6bf37c08c0357b7b270a8811c13e94c0afda",
+      "verdict": "clear",
+      "confidence": "low",
+      "searched_commits": 0,
+      "elapsed_s": 0.09,
+      "files": [
+        {
+          "path": "jsonpatch.py",
+          "added_lines": 45,
+          "signatures": [
+            "            (op.get('op'), op.get('path')) if isinstance(op, Mapping) else None",
+            "            self._compiled_ops = tuple(map(self._get_operation, self.patch))",
+            "            result[_json_deepcopy(name, memo)] = _json_deepcopy(value, memo)",
+            "    \"\"\"Deep-copies a JSON-shaped document faster than :func:`copy.deepcopy`.",
+            "            result.append(_json_deepcopy(value, memo))",
+            "    (subclasses, tuples, sets, custom objects) to ``copy.deepcopy`` with the",
+            "        # patch on every apply() is pure repeated work.  The signature only",
+            "        # editing an operation in place (or through an operation object) still"
+          ],
+          "candidates": 0,
+          "best": null,
+          "head_present": 3,
+          "head_total": 45,
+          "note": ""
+        }
+      ],
+      "window_since": "2024-11-19"
+    }
+  ],
+  "summary": {
+    "audited": 5,
+    "hits": 1,
+    "clear": 4
+  }
+}

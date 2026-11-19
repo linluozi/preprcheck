@@ -1,0 +1,40 @@
+diff --git a/inflect/__init__.py b/inflect/__init__.py
+index 500b5be..e1f8863 100644
+--- a/inflect/__init__.py
++++ b/inflect/__init__.py
+@@ -72,7 +72,7 @@ from typing import (
+ 
+ from jaraco.functools import pass_none
+ from more_itertools import windowed_complete
+-from typeguard import typechecked
++from typeguard import TypeCheckError, typechecked
+ 
+ from ._types import Word
+ 
+@@ -2221,8 +2221,25 @@ class engine:
+         """
+         return
+ 
+-    @typechecked
+     def ud_match(self, word: Word, wordlist: Sequence[Word | None]) -> str | None:
++        """Return the custom replacement for ``word``, if one matches.
++
++        Argument validation is inlined: the previous ``@typechecked`` wrapper
++        re-ran typeguard's generic machinery (including ``Sequence`` /
++        ``Annotated`` resolution) on every call, and ``plural`` calls this
++        helper three times.  The accepted domain is unchanged (``word`` must
++        be a ``str``, ``wordlist`` a sequence of ``str`` or ``None``), but the
++        check is a direct ``isinstance`` loop.
++        """
++        if not isinstance(word, Word) or not isinstance(wordlist, Sequence):
++            raise TypeCheckError(
++                "argument \"word\" is not an instance of inflect.Word"
++            )
++        for _item in wordlist:
++            if _item is not None and not isinstance(_item, Word):
++                raise TypeCheckError(
++                    "wordlist of ud_match must contain only str or None"
++                )
+         for i in range(len(wordlist) - 2, -2, -2):  # backwards through even elements
+             mo = re.search(rf"^{wordlist[i]}$", word, re.IGNORECASE)
+             if mo:

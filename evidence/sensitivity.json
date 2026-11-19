@@ -1,0 +1,34 @@
+{
+  "schema": "preprcheck/sensitivity/v1",
+  "note": "Synthetic mutations of the real cachetools patch, applied to the same full clone. They probe how much textual overlap the matcher requires; they are not upstream commits.",
+  "rows": [
+    {
+      "mutation": "all_added_lines_renamed",
+      "synthetic": true,
+      "verdict": "clear",
+      "confidence": "low",
+      "best": null,
+      "head_present": 1
+    },
+    {
+      "mutation": "one_added_line_changed",
+      "synthetic": true,
+      "verdict": "hit",
+      "confidence": "high",
+      "best": {
+        "sha": "598aaede07ea69d06ddd4cb73872c6700d031d24",
+        "date": "2026-11-15T20:21:47+01:00",
+        "subject": "Improve LRUCache.__setitem__() performance.",
+        "matched": 4,
+        "total": 5,
+        "ratio": 0.8,
+        "matched_lines": [
+          "        if key in order:",
+          "            order.move_to_end(key)",
+          "        else:"
+        ]
+      },
+      "head_present": 4
+    }
+  ]
+}

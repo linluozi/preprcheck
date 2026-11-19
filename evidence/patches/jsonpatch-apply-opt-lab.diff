@@ -1,0 +1,82 @@
+--- a/jsonpatch.py
++++ b/jsonpatch.py
+@@ -48,6 +48,39 @@
+ _ST_ADD = 0
+ _ST_REMOVE = 1
+ 
++
++def _json_deepcopy(obj, memo=None):
++    """Deep-copies a JSON-shaped document faster than :func:`copy.deepcopy`.
++
++    Documents parsed from JSON consist only of ``dict``, ``list``, ``str``,
++    ``int``, ``float``, ``bool`` and ``None``, for which ``copy.deepcopy``
++    pays the generic dispatch, reduction and ``_keep_alive`` machinery.  This
++    function copies exactly those types directly and defers everything else
++    (subclasses, tuples, sets, custom objects) to ``copy.deepcopy`` with the
++    same memo, so aliasing and cycles are preserved in all cases.
++    """
++    cls = type(obj)
++    if cls is str or cls is int or cls is float or cls is bool or obj is None:
++        return obj
++    if memo is None:
++        memo = {}
++    key = id(obj)
++    if key in memo:
++        return memo[key]
++    if cls is dict:
++        result = {}
++        memo[key] = result
++        for name, value in obj.items():
++            result[_json_deepcopy(name, memo)] = _json_deepcopy(value, memo)
++        return result
++    if cls is list:
++        result = []
++        memo[key] = result
++        for value in obj:
++            result.append(_json_deepcopy(value, memo))
++        return result
++    return copy.deepcopy(obj, memo)
++
+ # Up to which product of their lengths DiffBuilder matches up all equal items
+ # of two lists
+ _EXACT_MATCH_LIMIT = 500 ** 2
+@@ -932,6 +965,8 @@
+ 
+     def __init__(self, patch, pointer_cls=JsonPointer):
+         self.pointer_cls = pointer_cls
++        self._compiled_ops = None
++        self._compiled_sig = None
+ 
+         if isinstance(patch, (str, bytes, Mapping)):
+             raise InvalidJsonPatch("Document is expected to be sequence of operations")
+@@ -1065,7 +1100,20 @@
+ 
+     @property
+     def _ops(self):
+-        return tuple(map(self._get_operation, self.patch))
++        # Compiling an operation parses its pointer, so recompiling the whole
++        # patch on every apply() is pure repeated work.  The signature only
++        # compares the members that select the operation class and pointer;
++        # editing an operation in place (or through an operation object) still
++        # invalidates the cache, and ``value`` members are read from the same
++        # dictionaries at apply time, so they need no signature entry.
++        signature = tuple(
++            (op.get('op'), op.get('path')) if isinstance(op, Mapping) else None
++            for op in self.patch
++        )
++        if signature != self._compiled_sig:
++            self._compiled_ops = tuple(map(self._get_operation, self.patch))
++            self._compiled_sig = signature
++        return self._compiled_ops
+ 
+     def apply(self, obj, in_place=False, atomic=False):
+         """Applies the patch to a given object.
+@@ -1098,7 +1146,7 @@
+         """
+ 
+         if not in_place:
+-            obj = copy.deepcopy(obj)
++            obj = _json_deepcopy(obj)
+             atomic = False
+ 
+         ops = self._ops

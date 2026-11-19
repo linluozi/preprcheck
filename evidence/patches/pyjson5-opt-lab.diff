@@ -1,0 +1,50 @@
+diff --git a/json5/parser.py b/json5/parser.py
+index dd6275f..243d0e0 100644
+--- a/json5/parser.py
++++ b/json5/parser.py
+@@ -6,8 +6,12 @@
+ # pylint: disable=unnecessary-lambda,unnecessary-direct-lambda-call
+ # ruff: disable[PLC3002] (equivalent of unnecessary-direct-lambda-call)
+ 
++import re
+ import unicodedata
+ 
++_DQ_STRING_RE = re.compile(r'[^"\\\r\n]*')
++_SQ_STRING_RE = re.compile(r"[^'\\\r\n]*")
++
+ 
+ class Parser:
+     def __init__(self, msg, fname, pos=0):
+@@ -441,10 +445,23 @@ class Parser:
+             ]
+         )
+ 
++    def _fast_string(self, quote, rx):
++        start = self.pos
++        if start >= self.end or self.msg[start] != quote:
++            return False
++        p = start + 1
++        end = rx.match(self.msg, p).end()
++        if end < self.end and self.msg[end] == quote:
++            self._succeed(self.msg[p:end], end + 1)
++            return True
++        return False
++
+     def _string_(self):
+         self._choose([self._string__c0_, self._string__c1_])
+ 
+     def _string__c0_(self):
++        if self._fast_string("'", _SQ_STRING_RE):
++            return
+         self._push('string__c0')
+         self._seq(
+             [
+@@ -460,6 +477,8 @@ class Parser:
+         self._bind(lambda: self._star(self._sqchar_), 'cs')
+ 
+     def _string__c1_(self):
++        if self._fast_string('"', _DQ_STRING_RE):
++            return
+         self._push('string__c1')
+         self._seq(
+             [

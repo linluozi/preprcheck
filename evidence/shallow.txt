@@ -1,0 +1,1 @@
+error: shallow clone cannot answer history questions; re-clone with full history or pass --allow-shallow
