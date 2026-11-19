@@ -52,8 +52,9 @@ c128aa5e538b  master       Improve LRUCache.__setitem__() performance.
 ```
 
 Because the tool searches `--all` refs, it sees both; a clone of only one
-branch may see only one. This is a 1-in-8 sample, not a population estimate. All seven `clear` rows had
-zero candidate commits: none of their added lines was introduced anywhere in
+branch may see only one. This is a 1-in-8 sample, not a population estimate.
+
+All seven `clear` rows had zero candidate commits: none of their added lines was introduced anywhere in
 the 730-day window. That is expected for newly written code, but it remains a
 bounded negative (see Limits).
 
